@@ -11,7 +11,7 @@ az webapp create --resource-group mottusense-rg --plan mottusense-plan --name mo
 
 az webapp config set --resource-group mottusense-rg --name mottusense-api --use-32bit-worker-process false
 
-az sql server create --name mottusensesqlserver --resource-group mottusense-rg --location brazilsouth --admin-user sqladmin --admin-password "SenhaForte!123"
+az sql server create --name mottusensesqlserver --resource-group mottusense-rg --location brazilsouth --admin-user sqladmin --admin-password SenhaForte!123
 
 az sql db create --resource-group mottusense-rg --server mottusensesqlserver --name MottuSenseDB --service-objective S0 --backup-storage-redundancy Local
 
@@ -19,7 +19,7 @@ az sql server firewall-rule create --resource-group mottusense-rg --server mottu
 
 # configurar variaveis de ambiente
 
-az webapp config appsettings set --name mottusense-api --resource-group mottusense-rg --settings DB_URL="jdbc:sqlserver://mottusensesqlserver.database.windows.net:1433;database=MottuSenseDB;encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;" DB_USERNAME="sqladmin" DB_PASSWORD="SenhaForte!123" 
+az webapp config appsettings set --name mottusense-api --resource-group mottusense-rg --settings DB_URL="jdbc:sqlserver://mottusensesqlserver.database.windows.net:1433;database=MottuSenseDB;encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;" DB_USERNAME="sqladmin" DB_PASSWORD=SenhaForte!123 
 
 az webapp deploy --resource-group mottusense-rg --name mottusense-api --src-path ../users-0.0.1-SNAPSHOT.jar --type jar
 ```
