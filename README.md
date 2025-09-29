@@ -1,13 +1,13 @@
 # MottuSense-Cloud
 
-Guia rápido para criar e publicar a API MottuSense no Azure com .NET 8 e SQL Server.
+Guia rápido para criar e publicar a API MottuSense no Azure com Java 21 e SQL Server.
 
 ```bash
 az group create --name mottusense-rg --location brazilsouth
 
 az appservice plan create --name mottusense-plan --resource-group mottusense-rg --sku B1
 
-az webapp create --resource-group mottusense-rg --plan mottusense-plan --name mottusense-api --runtime "JAVA|21-java17" --deployment-local-git
+az webapp create --resource-group mottusense-rg --plan mottusense-plan --name mottusense-api --runtime "JAVA:21" --deployment-local-git
 
 az webapp config set --resource-group mottusense-rg --name mottusense-api --use-32bit-worker-process false
 
