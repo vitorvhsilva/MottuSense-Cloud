@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-br">
+<head>
+    <meta charset="UTF-8" />
+    <title>Detalhes do Usuário</title>
+    <link rel="stylesheet" th:href="@{/css/usuarios.css}"/>
+    <link rel="icon" type="image/png" th:href="@{/favicon.png}">
+</head>
+<body>
+
+<header>
+    <div class="topbar">
+        <div class="brand">MottuSense • Usuário</div>
+        <nav>
+            <a th:href="@{/usuariosview/listar}">Voltar</a>
+            <a th:href="@{/filiaisview/listar}">Filiais</a>
+        </nav>
+        <div class="actions-bar">
+            <input id="q" type="search" placeholder="Atalho: / — filtrar por nome/email" aria-label="Pesquisar">
+            <button id="toggleTheme" class="btn" type="button" title="Alternar tema">Tema</button>
+            <a class="link-btn" th:href="@{/usuariosview/listar}">Voltar à lista</a>
+        </div>
+    </div>
+</header>
+
+<main>
+    <h1>Detalhes do Usuário</h1>
+
+    <div class="card" th:with="u=${usuario}">
+        <div class="item"><span class="label">ID</span><span id="userId" th:text="${u.idUsuario}">id</span></div>
+
+        <div class="row">
+            <div class="item">
+                <span class="label">Nome</span>
+                <span id="userName" th:text="${u.nomeUsuario}">Nome</span>
+            </div>
+            <div class="item">
+                <span class="label">Email</span>
+                <span id="userEmail" th:text="${u.emailUsuario}">email@exemplo.com</span>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="item">
+                <span class="label">CPF</span>
+                <span th:text="${u.cpfUsuario}">000.000.000-00</span>
+            </div>
+            <div class="item">
+                <span class="label">Telefone</span>
+                <span th:text="${u.telefoneUsuario}">(00) 90000-0000</span>
+            </div>
+        </div>
+
+        <div class="item">
+            <span class="label">Data de Nascimento</span>
+            <span th:text="${u.dataNascimentoUsuario != null ? #temporals.format(u.dataNascimentoUsuario, 'dd/MM/yyyy') : '-'}">01/01/2000</span>
+        </div>
+
+        <div class="item">
+            <span class="label">Senha</span>
+            <div class="password-wrap">
+                <input id="senhaUsuario"
+                       type="password"
+                       th:value="${u.senhaUsuario}"
+                       readonly
+                       aria-label="Senha do usuário" />
+                <button type="button" class="toggle-btn" onclick="toggleSenha()">Mostrar</button>
+            </div>
+        </div>
+
+        <div class="actions">
+            <a class="btn" th:href="@{/usuariosview/listar}">Voltar</a>
+            <a class="btn" th:href="@{'/usuariosview/editar/' + ${u.idUsuario}}">Editar</a>
+            <a class="btn" th:href="@{'/usuariosview/excluir/' + ${u.idUsuario}}"
+               onclick="return confirm('Tem certeza que deseja excluir?');">Excluir</a>
+        </div>
+    </div>
+</main>
+
+<footer th:with="u=${usuario}">
+    <div class="stats">
+        <strong th:text="${u.nomeUsuario}">Usuário</strong> •
+        Email: <span th:text="${u.emailUsuario}">email@exemplo.com</span>
+    </div>
+    <div class="actions">
+        <button class="btn" type="button" id="copyId">Copiar ID</button>
+        <button class="btn" type="button" id="copyEmail">Copiar Email</button>
+        <button class="btn" type="button" id="exportJson">Exportar JSON</button>
+        <button class="btn" type="button" id="printPage">Imprimir</button>
+        <button class="btn" type="button" id="toTop">Topo</button>
+    </div>
+</footer>
+
+<script>
+    // Alternância de tema com persistência
+    (function(){
+      const root = document.documentElement;
+      const saved = localStorage.getItem('theme') || 'light';
+      if (saved === 'dark') root.classList.add('dark');
+      document.getElementById('toggleTheme').addEventListener('click', () => {
+        root.classList.toggle('dark');
+        localStorage.setItem('theme', root.classList.contains('dark') ? 'dark' : 'light');
+      });
+    })();
+
+    // Atalho "/" para focar a busca
+    (function(){
+      const q = document.getElementById('q');
+      window.addEventListener('keydown', (e) => {
+        if (e.key === '/' && document.activeElement !== q) {
+          e.preventDefault(); q?.focus();
+        }
+      });
+      // filtro simples no DOM (nome/email)
+      const emailEl = document.getElementById('userEmail');
+      const nameEl  = document.getElementById('userName');
+      q?.addEventListener('input', () => {
+        const term = q.value.toLowerCase();
+        const visible = (nameEl?.innerText.toLowerCase().includes(term) || emailEl?.innerText.toLowerCase().includes(term) || term==='');
+        document.querySelector('.card').style.display = visible ? '' : 'none';
+      });
+    })();
+
+    // Mostrar/ocultar senha
+    function toggleSenha() {
+      const input = document.getElementById('senhaUsuario');
+      const btn = event.currentTarget;
+      if (input.type === 'password') {
+        input.type = 'text';
+        btn.textContent = 'Ocultar';
+      } else {
+        input.type = 'password';
+        btn.textContent = 'Mostrar';
+      }
+    }
+
+    // Utilidades do rodapé
+    (function(){
+      const userId   = document.getElementById('userId')?.innerText || '';
+      const userName = document.getElementById('userName')?.innerText || '';
+      const userEmail= document.getElementById('userEmail')?.innerText || '';
+      document.getElementById('copyId')?.addEventListener('click', async () => {
+        try { await navigator.clipboard.writeText(userId); alert('ID copiado!'); } catch {}
+      });
+      document.getElementById('copyEmail')?.addEventListener('click', async () => {
+        try { await navigator.clipboard.writeText(userEmail); alert('Email copiado!'); } catch {}
+      });
+      document.getElementById('exportJson')?.addEventListener('click', () => {
+        // Gera JSON apenas com os campos que estão visíveis na tela
+        const data = {
+          idUsuario: userId,
+          nomeUsuario: userName,
+          emailUsuario: userEmail,
+          cpfUsuario: document.querySelector('.card .row:nth-of-type(2) .item:nth-of-type(1) span:nth-of-type(2)')?.innerText || '',
+          telefoneUsuario: document.querySelector('.card .row:nth-of-type(2) .item:nth-of-type(2) span:nth-of-type(2)')?.innerText || '',
+          dataNascimentoUsuario: document.querySelector('.card .item:nth-of-type(4) span:nth-of-type(2)')?.innerText || ''
+        };
+        const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `usuario-${userId || 'detalhe'}.json`;
+        document.body.appendChild(a); a.click(); a.remove();
+      });
+      document.getElementById('printPage')?.addEventListener('click', () => window.print());
+      document.getElementById('toTop')?.addEventListener('click', () => window.scrollTo({top:0, behavior:'smooth'}));
+    })();
+</script>
+</body>
+</html>

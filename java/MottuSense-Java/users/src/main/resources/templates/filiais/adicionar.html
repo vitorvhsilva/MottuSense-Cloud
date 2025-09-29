@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <title>Adicionar Filial</title>
+  <link rel="stylesheet" th:href="@{/css/filiais.css}"/>
+  <link rel="icon" type="image/png" th:href="@{/favicon.png}">
+</head>
+<body>
+
+<header>
+  <div class="brand">MottuSense • Filiais</div>
+  <div>
+    <nav style="display:inline-block;">
+      <a th:href="@{/filiaisview/listar}">Voltar</a>
+      <a th:href="@{/usuariosview/listar}">Usuários</a>
+    </nav>
+    <button id="themeToggle" class="toggle" type="button" aria-label="Alternar tema">Tema</button>
+  </div>
+</header>
+
+<main>
+  <h1>Adicionar Filial</h1>
+
+  <div class="alert-success" th:if="${sucesso} != null or ${param.sucesso} != null">
+    <span th:text="${sucesso} ?: 'Filial cadastrada com sucesso'">Filial cadastrada com sucesso</span>
+  </div>
+  <div class="alert-error" th:if="${erro}" th:text="${erro}">Erro</div>
+
+  <form id="formFilial" th:action="@{/filiaisview/salvar}" method="post" novalidate>
+    <input type="hidden" th:name="${_csrf?.parameterName}" th:value="${_csrf?.token}" />
+
+    <div class="field">
+      <label for="nomeFilial">Nome da filial</label>
+      <input id="nomeFilial" type="text" name="nomeFilial" placeholder="Digite o nome da filial" autocomplete="off"/>
+    </div>
+    <div class="field">
+      <label for="cep">CEP</label>
+      <input id="cep" type="text" name="cep" placeholder="Somente números" autocomplete="off"/>
+    </div>
+
+    <div class="actions">
+      <button class="btn" type="submit">Salvar</button>
+      <a class="link" th:href="@{/filiaisview/listar}">Cancelar</a>
+    </div>
+  </form>
+</main>
+
+<footer id="footer">
+  <div><span id="dirtyDot" class="dot"></span><span id="dirtyText">Sem alterações</span></div>
+  <div>&copy; <span id="year"></span> MottuSense</div>
+</footer>
+
+<script>
+  // === Tema (claro/escuro) com persistência ===
+  (function () {
+    const root = document.documentElement;
+    const btn = document.getElementById('themeToggle');
+    const saved = localStorage.getItem('theme') || 'light';
+    if (saved === 'dark') root.classList.add('dark');
+    btn.addEventListener('click', () => {
+      root.classList.toggle('dark');
+      localStorage.setItem('theme', root.classList.contains('dark') ? 'dark' : 'light');
+    });
+  })();
+
+  // === Footer: ano e indicador de "form dirty" + proteção de saída ===
+  (function () {
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    const form = document.getElementById('formFilial');
+    const footer = document.getElementById('footer');
+    const dot = document.getElementById('dirtyDot');
+    const text = document.getElementById('dirtyText');
+
+    let isDirty = false;
+    const markDirty = () => {
+      if (!isDirty) {
+        isDirty = true;
+        footer.classList.add('dirty');
+        text.textContent = 'Alterações não salvas';
+      }
+    };
+
+    form.addEventListener('input', markDirty);
+    form.addEventListener('change', markDirty);
+
+    // ao enviar, não bloquear a navegação
+    form.addEventListener('submit', () => { isDirty = false; });
+
+    // alerta se tentar sair com alterações
+    window.addEventListener('beforeunload', (e) => {
+      if (isDirty) {
+        e.preventDefault();
+        e.returnValue = '';
+      }
+    });
+  })();
+</script>
+</body>
+</html>

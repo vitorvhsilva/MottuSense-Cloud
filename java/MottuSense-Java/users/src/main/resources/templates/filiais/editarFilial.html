@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <title>Editar Filial</title>
+  <link rel="stylesheet" th:href="@{/css/filiais.css}"/>
+  <link rel="icon" type="image/png" th:href="@{/favicon.png}">
+</head>
+<body>
+
+<header>
+  <div class="brand">MottuSense • Filiais</div>
+  <div>
+    <nav style="display:inline-block;">
+      <a th:href="@{/filiaisview/listar}">Voltar</a>
+      <a th:href="@{/usuariosview/listar}">Usuários</a>
+    </nav>
+    <button id="themeToggle" class="toggle" type="button" aria-label="Alternar tema">Tema</button>
+  </div>
+</header>
+
+<main>
+  <h1>Editar Filial</h1>
+
+  <div class="alert-success" th:if="${sucesso} != null or ${param.sucesso} != null">
+    <span th:text="${sucesso} ?: 'Filial atualizada com sucesso'">Filial atualizada com sucesso</span>
+  </div>
+  <div class="alert-error" th:if="${erro}" th:text="${erro}">Erro</div>
+
+  <p class="muted">ID: <span th:text="${idFilial}">id</span></p>
+
+  <form id="formFilial"
+        th:action="@{/filiaisview/atualizar/{id}(id=${idFilial})}"
+        th:object="${filial}"
+        method="post"
+        novalidate>
+
+    <input type="hidden" th:name="${_csrf?.parameterName}" th:value="${_csrf?.token}" />
+
+    <input type="hidden" name="idFilial" th:value="${idFilial}" />
+
+    <div class="field">
+      <label for="nomeFilial">Nome da filial</label>
+      <input id="nomeFilial"
+             type="text"
+             th:field="*{nomeFilial}"
+             placeholder="Digite o nome da filial"
+             autocomplete="off" />
+      <div class="error" th:if="${#fields.hasErrors('nomeFilial')}" th:errors="*{nomeFilial}"></div>
+    </div>
+
+    <div class="actions">
+      <button class="btn" type="submit">Atualizar</button>
+      <a class="link" th:href="@{/filiaisview/listar}">Cancelar</a>
+    </div>
+  </form>
+</main>
+
+<footer id="footer">
+  <div>
+    <span class="dot" id="dirtyDot"></span>
+    <span id="dirtyText">Sem alterações</span>
+  </div>
+  <div>
+    • &copy; <span id="year"></span> MottuSense
+  </div>
+</footer>
+
+<script>
+  // Tema persistente
+  (function(){
+    const root = document.documentElement;
+    const btn = document.getElementById('themeToggle');
+    const saved = localStorage.getItem('theme') || 'light';
+    if(saved === 'dark') root.classList.add('dark');
+    btn.addEventListener('click', () => {
+      root.classList.toggle('dark');
+      localStorage.setItem('theme', root.classList.contains('dark') ? 'dark' : 'light');
+    });
+  })();
+
+  // Footer: ano + indicador de alterações + proteção de saída
+  (function(){
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    const form = document.getElementById('formFilial');
+    const footer = document.getElementById('footer');
+    const text = document.getElementById('dirtyText');
+
+    let dirty = false;
+    const markDirty = () => {
+      if (!dirty) {
+        dirty = true;
+        footer.classList.add('dirty');
+        text.textContent = 'Alterações não salvas';
+      }
+    };
+
+    form.addEventListener('input', markDirty);
+    form.addEventListener('change', markDirty);
+    form.addEventListener('submit', () => { dirty = false; });
+
+    window.addEventListener('beforeunload', (e) => {
+      if (dirty) { e.preventDefault(); e.returnValue = ''; }
+    });
+  })();
+</script>
+</body>
+</html>

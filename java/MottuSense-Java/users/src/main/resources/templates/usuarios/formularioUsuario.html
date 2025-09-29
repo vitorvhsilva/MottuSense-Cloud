@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${titulo} ?: 'Adicionar Usuário'">Adicionar Usuário</title>
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" th:href="@{/css/usuarios.css}"/>
+    <link rel="icon" type="image/png" th:href="@{/favicon.png}">
+</head>
+<body>
+
+<header>
+    <div class="topbar">
+        <div class="brand">MottuSense • Usuários</div>
+        <nav>
+            <a th:href="@{/usuariosview/listar}">Voltar</a>
+            <a th:href="@{/filiaisview/listar}">Filiais</a>
+        </nav>
+        <div class="header-actions">
+            <input id="q" class="search" type="search" placeholder="Atalho: / — pesquisar na lista" aria-label="Pesquisar" />
+            <span class="chip" title="Campos obrigatórios restantes"><span id="reqCount">—</span> obrigatórios</span>
+            <button id="toggleTheme" class="btn btn-secondary" type="button" title="Alternar tema">Tema</button>
+        </div>
+    </div>
+</header>
+
+<main>
+    <div class="form-container">
+        <div class="form-head">
+            <h1 th:text="${titulo} ?: 'Adicionar Usuário'">Adicionar Usuário</h1>
+        </div>
+
+        <form th:action="@{/usuariosview/salvar}" th:object="${usuario}" method="post" id="userForm" novalidate>
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+            <div class="form-group">
+                <label for="nomeUsuario">Nome:</label>
+                <input type="text" id="nomeUsuario" th:field="*{nomeUsuario}" required>
+                <span class="error" th:if="${#fields.hasErrors('nomeUsuario')}" th:errors="*{nomeUsuario}"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="emailUsuario">Email:</label>
+                <input type="email" id="emailUsuario" th:field="*{emailUsuario}" required>
+                <span class="error" th:if="${#fields.hasErrors('emailUsuario')}" th:errors="*{emailUsuario}"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="senhaUsuario">Senha:</label>
+                <div class="pw-row">
+                    <input type="password" id="senhaUsuario" th:field="*{senhaUsuario}" required>
+                    <div class="pw-tools">
+                        <button class="btn btn-secondary" type="button" id="togglePw">Mostrar</button>
+                        <button class="btn btn-secondary" type="button" id="genPw">Gerar</button>
+                    </div>
+                </div>
+                <div class="meter-wrap" aria-hidden="true" style="margin-top:8px">
+                    <div id="pwMeter" class="meter"></div>
+                </div>
+                <small id="pwHint" class="chip" style="margin-top:6px; display:inline-block">Força: —</small>
+                <span class="error" th:if="${#fields.hasErrors('senhaUsuario')}" th:errors="*{senhaUsuario}"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="cpfUsuario">CPF:</label>
+                <input type="text" id="cpfUsuario" th:field="*{cpfUsuario}" maxlength="11" inputmode="numeric" required>
+                <span class="error" th:if="${#fields.hasErrors('cpfUsuario')}" th:errors="*{cpfUsuario}"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="telefoneUsuario">Telefone:</label>
+                <input type="text" id="telefoneUsuario" th:field="*{telefoneUsuario}" inputmode="numeric" required>
+                <span class="error" th:if="${#fields.hasErrors('telefoneUsuario')}" th:errors="*{telefoneUsuario}"></span>
+            </div>
+
+            <div class="inline">
+                <div class="form-group">
+                    <label for="dia">Dia Nascimento:</label>
+                    <input type="number" id="dia" th:field="*{dia}" min="1" max="31" required>
+                    <span class="error" th:if="${#fields.hasErrors('dia')}" th:errors="*{dia}"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="mes">Mês Nascimento:</label>
+                    <input type="number" id="mes" th:field="*{mes}" min="1" max="12" required>
+                    <span class="error" th:if="${#fields.hasErrors('mes')}" th:errors="*{mes}"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="ano">Ano Nascimento:</label>
+                    <input type="number" id="ano" th:field="*{ano}" min="1900" th:max="${T(java.time.LocalDate).now().year}" required>
+                    <span class="error" th:if="${#fields.hasErrors('ano')}" th:errors="*{ano}"></span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">Cadastrar Usuário</button>
+            </div>
+        </form>
+    </div>
+</main>
+
+<footer>
+    <div class="chip">Dica: use “/” para focar a busca • Tema persiste entre visitas</div>
+    <div class="footer-actions">
+        <button type="button" class="btn btn-secondary" id="clearForm">Limpar</button>
+        <button type="button" class="btn btn-secondary" id="printPage">Imprimir</button>
+        <button type="button" class="btn btn-secondary" id="toTop">Topo</button>
+    </div>
+</footer>
+
+<script>
+    // Tema com persistência
+    (function(){
+      const root = document.documentElement;
+      const saved = localStorage.getItem('theme') || 'light';
+      if(saved === 'dark'){ root.classList.add('dark'); }
+      document.getElementById('toggleTheme').addEventListener('click', () => {
+        root.classList.toggle('dark');
+        localStorage.setItem('theme', root.classList.contains('dark') ? 'dark' : 'light');
+      });
+    })();
+
+    // Atalho "/" para focar a busca
+    (function(){
+      const q = document.getElementById('q');
+      window.addEventListener('keydown', (e) => {
+        if (e.key === '/' && document.activeElement !== q) {
+          e.preventDefault(); q?.focus();
+        }
+      });
+    })();
+
+    // Contar obrigatórios faltando (client-side)
+    (function(){
+      const form = document.getElementById('userForm');
+      const reqCount = document.getElementById('reqCount');
+      const update = () => {
+        const required = form.querySelectorAll('[required]');
+        let missing = 0;
+        required.forEach(el => {
+          if(!el.value || (el.type === 'number' && el.value === '')) missing++;
+        });
+        reqCount.textContent = missing;
+      };
+      form.addEventListener('input', update);
+      update();
+    })();
+
+    // Utilidades do rodapé
+    document.getElementById('clearForm')?.addEventListener('click', () => {
+      if(confirm('Limpar todos os campos?')){
+        document.getElementById('userForm').reset();
+        document.getElementById('reqCount').textContent = document.querySelectorAll('#userForm [required]').length;
+        document.getElementById('pwMeter').style.width = '0%';
+        document.getElementById('pwMeter').className = 'meter';
+        document.getElementById('pwHint').textContent = 'Força: —';
+      }
+    });
+    document.getElementById('printPage')?.addEventListener('click', () => window.print());
+    document.getElementById('toTop')?.addEventListener('click', () => window.scrollTo({top:0, behavior:'smooth'}));
+
+    // Só dígitos para CPF/Telefone
+    (function(){
+      const onlyDigits = el => el && el.addEventListener('input', e => {
+        e.target.value = e.target.value.replace(/\D/g, '');
+      });
+      onlyDigits(document.getElementById('cpfUsuario'));
+      onlyDigits(document.getElementById('telefoneUsuario'));
+    })();
+
+    // Mostrar/ocultar senha + gerador + medidor de força
+    (function(){
+      const input = document.getElementById('senhaUsuario');
+      const toggle = document.getElementById('togglePw');
+      const gen = document.getElementById('genPw');
+      const meter = document.getElementById('pwMeter');
+      const hint = document.getElementById('pwHint');
+
+      function score(pw){
+        let s = 0;
+        if(!pw) return 0;
+        if(pw.length >= 8) s+=25;
+        if(pw.length >= 12) s+=10;
+        if(/[a-z]/.test(pw)) s+=15;
+        if(/[A-Z]/.test(pw)) s+=15;
+        if(/[0-9]/.test(pw)) s+=15;
+        if(/[^A-Za-z0-9]/.test(pw)) s+=20;
+        return Math.min(s, 100);
+      }
+      function updateMeter(){
+        const val = input.value || '';
+        const sc = score(val);
+        meter.style.width = sc + '%';
+        meter.className = 'meter' + (sc>=70 ? ' good' : sc>=40 ? ' ok' : '');
+        hint.textContent = 'Força: ' + (sc>=70 ? 'Boa' : sc>=40 ? 'Média' : 'Fraca');
+      }
+      toggle.addEventListener('click', () => {
+        if(input.type === 'password'){ input.type = 'text'; toggle.textContent = 'Ocultar'; }
+        else { input.type = 'password'; toggle.textContent = 'Mostrar'; }
+      });
+      gen.addEventListener('click', () => {
+        const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%*?';
+        let out = '';
+        for(let i=0;i<14;i++){ out += chars[Math.floor(Math.random()*chars.length)]; }
+        input.value = out;
+        updateMeter();
+      });
+      input.addEventListener('input', updateMeter);
+    })();
+
+    // Aviso de navegação com alterações não salvas
+    (function(){
+      const form = document.getElementById('userForm');
+      let dirty = false;
+      form.addEventListener('input', () => dirty = true);
+      window.addEventListener('beforeunload', (e) => {
+        if(dirty){ e.preventDefault(); e.returnValue = ''; }
+      });
+      form.addEventListener('submit', () => { dirty = false; });
+    })();
+</script>
+</body>
+</html>
