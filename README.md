@@ -1,33 +1,42 @@
 # MottuSense-Cloud
 
-# 🚀 MottuSense - API em Java 21 no Azure
+# 🚀 MottuSense - API de Usuários (Java 21 + Spring Boot)
 
 ## 📌 Descrição da Solução
-O **MottuSense** é uma aplicação desenvolvida em **Java 21** utilizando **Spring Boot**, que oferece uma **API REST** para gerenciamento de usuários.  
-A aplicação foi publicada no **Azure App Service** e utiliza o **Azure SQL Database** como camada de persistência.  
+O **MottuSense** é uma aplicação desenvolvida em **Java 21** com **Spring Boot**, estruturada em camadas (domain, repository, service e controller).  
+A aplicação expõe uma **API REST** para gerenciamento de usuários, incluindo informações pessoais, filiais, configurações e localizações.  
 
-A infraestrutura foi provisionada e configurada 100% via **Azure CLI**, garantindo automação, consistência e alinhamento às práticas de **DevOps e Cloud Computing**.  
-Foram implementadas operações de **CRUD (Create, Read, Update, Delete)** para entidades de usuários, incluindo dados pessoais, configurações e relacionamento com filiais.  
+Foi projetada para rodar no **Azure App Service**, com persistência de dados em **Azure SQL Database**.  
+A infraestrutura de nuvem foi provisionada via **Azure CLI**, garantindo automação e padronização do ambiente.  
 
 ---
 
-## 💡 Benefícios para o Negócio
-- **Centralização dos dados:** os registros de usuários ficam em um banco SQL Server em nuvem, com segurança, backup e alta disponibilidade.
-- **Escalabilidade:** o App Service permite que a API cresça de acordo com a demanda, sem necessidade de reconfigurações complexas.
-- **Automação e DevOps:** uso de scripts via CLI para provisionamento da infraestrutura, reduzindo erros e garantindo rastreabilidade.
-- **Acessibilidade global:** a API está exposta em uma URL pública, podendo ser consumida por qualquer sistema ou cliente.
-- **Facilidade de manutenção:** variáveis de ambiente (`DB_URL`, `DB_USERNAME`, `DB_PASSWORD`) foram configuradas diretamente no App Service, permitindo ajustes sem alterar o código.
-- **Base para expansão:** a arquitetura já suporta integração futura com módulos de frota, relatórios analíticos e sistemas corporativos.
+## 💡 Funcionalidades
+- Cadastro de usuários (nome, CPF, telefone, e-mail, senha, data de nascimento).  
+- Associação de usuários a **filiais** e **localizações**.  
+- Configuração personalizada por usuário (ex.: alertas de entrada/saída de motos no pátio).  
+- Operações de **CRUD (Create, Read, Update, Delete)** expostas em endpoints REST.  
+- Autenticação básica via **Spring Security** (usuário: `user` / senha: `teste`).  
+
+---
+
+## 💼 Benefícios para o Negócio
+- **Gestão centralizada de usuários:** todos os dados ficam armazenados em nuvem com segurança e alta disponibilidade.  
+- **Escalabilidade:** o App Service permite aumento de capacidade sob demanda.  
+- **Automação DevOps:** toda a criação de recursos e deploy é feita por **Azure CLI**, reduzindo erros manuais.  
+- **Expansão futura:** base sólida para integrar novos módulos (ex.: gestão de frota, relatórios de eventos, monitoramento).  
+- **Flexibilidade de integração:** a API pode ser consumida por aplicações web, mobile ou sistemas corporativos.  
 
 ---
 
 ## 🛠️ Tecnologias Utilizadas
 - **Linguagem:** Java 21  
-- **Framework:** Spring Boot  
+- **Framework:** Spring Boot 3.x  
 - **Banco de Dados:** Azure SQL Database  
-- **Hospedagem:** Azure App Service (Plano B1)  
-- **Automação:** Azure CLI  
-- **Controle de versão:** Git + GitHub  
+- **ORM:** Spring Data JPA / Hibernate  
+- **Segurança:** Spring Security (Basic Auth)  
+- **Hospedagem:** Azure App Service  
+- **Automação:** Azure CLI 
 
 ---
 
