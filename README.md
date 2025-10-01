@@ -50,6 +50,12 @@ A infraestrutura de nuvem foi provisionada via **Azure CLI**, garantindo automa√
 
 ---
 
+# Video completo testando a API.
+
+## https://youtu.be/dfZJlOfptuE
+
+---
+
 # Guia r√°pido para criar e publicar a API MottuSense no Azure com Java 21 e SQL Server.
 
 ```bash
