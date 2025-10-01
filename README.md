@@ -52,7 +52,7 @@ A infraestrutura de nuvem foi provisionada via **Azure CLI**, garantindo automa√
 
 # Video completo testando a API.
 
-## https://youtu.be/dfZJlOfptuE
+## https://youtu.be/aTSQPyF1W28
 
 ---
 
