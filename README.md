@@ -79,3 +79,11 @@ az webapp config appsettings set --name mottusense-api --resource-group mottusen
 
 az webapp deploy --resource-group mottusense-rg --name mottusense-api --src-path ./users-0.0.1-SNAPSHOT.jar --type jar
 ```
+
+
+# Imagens das tabelas
+<img width="1364" height="634" alt="Captura de tela 2025-09-30 225854" src="https://github.com/user-attachments/assets/eae0104b-2d47-4956-b459-d373c4113d74" />
+
+<img width="1365" height="630" alt="Captura de tela 2025-09-30 230004" src="https://github.com/user-attachments/assets/d527a34e-7d5f-4cc6-808d-f8607b0ff549" />
+
+
