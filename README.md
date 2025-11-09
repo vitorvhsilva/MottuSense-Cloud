@@ -2,6 +2,10 @@
 
 # 🚀 MottuSense - API de Usuários (Java 21 + Spring Boot)
 
+## Arquitetura do Projeto
+<img src="https://github.com/vitorvhsilva/MottuSense-dotNet/blob/main/assets/arquitetura_mottusense.png">
+Essa é a solução completa que vamos entregar pra Mottu.
+
 ## 📌 Descrição da Solução
 O **MottuSense** é uma aplicação desenvolvida em **Java 21** com **Spring Boot**, estruturada em camadas (domain, repository, service e controller).  
 A aplicação expõe uma **API REST** para gerenciamento de usuários, incluindo informações pessoais, filiais, configurações e localizações.  
